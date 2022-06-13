@@ -6,7 +6,7 @@ async function main() {
   await greeter.deployed();
 
   console.log("Greeter deployed to:", greeter.address);
-  console.log("Deployed owner:", owner);
+  console.log("Deployed owner:", owner.address);
 }
 
 main()
