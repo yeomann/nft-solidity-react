@@ -9,14 +9,14 @@ async function main() {
   console.log("Deployed owner:", owner.address);
 
   // mint NFT.
-  let txn = await nftContract.makeAnEpicNFT();
+  let txn = await nftContract.mintAnNFT();
   // Wait for it to be mined.
   await txn.wait();
   console.log("Minted NFT #1")
 
 
   // mint NFT.
-  txn = await nftContract.makeAnEpicNFT();
+  txn = await nftContract.mintAnNFT();
   // Wait for it to be mined.
   await txn.wait();
   console.log("Minted NFT #2");
