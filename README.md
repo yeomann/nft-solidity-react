@@ -1,18 +1,34 @@
 # NFT Project
-
+- Creates NFT contract
+- Add SVG as NFT
+- Create SVG NFT as base64 URI
+- Add JSON of NFT metadata for opensea
+- Create full JSON with SVG NFT + metadata inside
+- Create React UI and Integrate the contract
+- Mint NFT from UI
+- Run + Deploy contract on Rinkeby + Görli
+- Check NFT on OpenSea + Rarible
 
 ## Links:
 
-https://testnets.opensea.io/collection/denft-wppdgw0deu
-https://rinkeby.etherscan.io/address/0x007dDD7c78b5620496c43F31f8876193FD2ef566
-https://nftpreview.0xdev.codes/?utm_source=buildspace.so&utm_medium=buildspace_project
+1 - https://testnets.opensea.io/collection/denft-wppdgw0deu
+
+2 - https://rinkeby.etherscan.io/address/0x007dDD7c78b5620496c43F31f8876193FD2ef566
+
+3 - https://nftpreview.0xdev.codes/?utm_source=buildspace.so&utm_medium=buildspace_project
 
 ## Test SVG URI:
+With Color:
+```
+data:application/json;base64,eyJuYW1lIjogIkJyb3duQXlyYW5PY3JhIiwgImRlc2NyaXB0aW9uIjogIkEgaGlnaGx5IGFjY2xhaW1lZCBjb2xsZWN0aW9uIG9mIHNxdWFyZXMuIiwgImltYWdlIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owbmFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jbklIQnlaWE5sY25abFFYTndaV04wVW1GMGFXODlKM2hOYVc1WlRXbHVJRzFsWlhRbklIWnBaWGRDYjNnOUp6QWdNQ0F6TlRBZ016VXdKejQ4YzNSNWJHVStMbUpoYzJVZ2V5Qm1hV3hzT2lCM2FHbDBaVHNnWm05dWRDMW1ZVzFwYkhrNklITmxjbWxtT3lCbWIyNTBMWE5wZW1VNklESTBjSGc3SUgwOEwzTjBlV3hsUGp4eVpXTjBJSGRwWkhSb1BTY3hNREFsSnlCb1pXbG5hSFE5SnpFd01DVW5JR1pwYkd3OUp5TTVZekkzWWpBbkx6NDhkR1Y0ZENCNFBTYzFNQ1VuSUhrOUp6VXdKU2NnWTJ4aGMzTTlKMkpoYzJVbklHUnZiV2x1WVc1MExXSmhjMlZzYVc1bFBTZHRhV1JrYkdVbklIUmxlSFF0WVc1amFHOXlQU2R0YVdSa2JHVW5Qa0p5YjNkdVFYbHlZVzVQWTNKaFBDOTBaWGgwUGp3dmMzWm5QZz09In0=
+```
 
+Without color:
 ```
 data:application/json;base64,eyJuYW1lIjogIkJsYWNrVmVyeU11Y2hWZXJ5QXlyb25PY3JhIiwgImRlc2NyaXB0aW9uIjogIkEgaGlnaGx5IGFjY2xhaW1lZCBjb2xsZWN0aW9uIG9mIHNxdWFyZXMuIiwgImltYWdlIjogImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QjRiV3h1Y3owbmFIUjBjRG92TDNkM2R5NTNNeTV2Y21jdk1qQXdNQzl6ZG1jbklIQnlaWE5sY25abFFYTndaV04wVW1GMGFXODlKM2hOYVc1WlRXbHVJRzFsWlhRbklIWnBaWGRDYjNnOUp6QWdNQ0F6TlRBZ016VXdKejQ4YzNSNWJHVStMbUpoYzJVZ2V5Qm1hV3hzT2lCM2FHbDBaVHNnWm05dWRDMW1ZVzFwYkhrNklITmxjbWxtT3lCbWIyNTBMWE5wZW1VNklESTBjSGc3SUgwOEwzTjBlV3hsUGp4eVpXTjBJSGRwWkhSb1BTY3hNREFsSnlCb1pXbG5hSFE5SnpFd01DVW5JR1pwYkd3OUoySnNZV05ySnlBdlBqeDBaWGgwSUhnOUp6VXdKU2NnZVQwbk5UQWxKeUJqYkdGemN6MG5ZbUZ6WlNjZ1pHOXRhVzVoYm5RdFltRnpaV3hwYm1VOUoyMXBaR1JzWlNjZ2RHVjRkQzFoYm1Ob2IzSTlKMjFwWkdSc1pTYytRbXhoWTJ0V1pYSjVUWFZqYUZabGNubEJlWEp2Yms5amNtRThMM1JsZUhRK1BDOXpkbWMrIn0=
 ```
 
+# Run n Play commands
 Try running some of the following tasks:
 
 ```shell

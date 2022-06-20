@@ -10,12 +10,19 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import { Base64 } from "./lib/Base64.sol";
 
 contract DeNFT is ERC721URIStorage {
+    // event on mint
+    event nftMinted(address sender, uint256 tokenId);
     // some 3 random arrays of words 
     string[] firstWords = ["Red", "BlackRed", "Yellow", "VeryYellow", "Blue", "DarkBlue", "Brown", "BlackBrown", "Purple", "RedPurple", "Silver", "BlackVeryMuch"];
     string[] secondWords = ["Icetea", "VeryIcetea", "Ayran", "VeryAyran", "Nescafe", "Turkish Coffee"];
     string[] thirdWords = ["Tomatto", "Ocra", "Potato", "Reddish", "Cabbage", "GreenChilli", "VeryChilli", "RedChilli"];
-    string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
-  
+    // string baseSvg = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='black' /><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
+    string svgPartOne = "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='";
+    string svgPartTwo = "'/><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
+
+    // some color for svg
+    string[] materialColors = ["#f44336", "#e91e63", "#9c27b0", "#3f51b5", "#2196f3", "#03a9f4", "#00bcd4", "#009688", "#4caf50", "#8bc34a", "#cddc39", "#ffeb3b", "#ffc107", "#ff9800", "#ff5722", "#795548", "#9e9e9e", "#607d8b"];
+
     // OpenZeppelin to help us keep track of _tokenIds.
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
@@ -36,6 +43,11 @@ contract DeNFT is ERC721URIStorage {
     function random(string memory input) internal pure returns (uint256) {
       return uint256(keccak256(abi.encodePacked(input)));
     }
+    function pickRandomColor(uint256 tokenId) public view returns (string memory) {
+      uint256 rand = random(string(abi.encodePacked("COLOR", Strings.toString(tokenId))));
+      rand = rand % materialColors.length;
+      return materialColors[rand];
+    }
 
     function mintAnNFT() public {
       // current NFT item count with the help of _tokenIds.current() in the contract
@@ -46,11 +58,17 @@ contract DeNFT is ERC721URIStorage {
       string memory second = pickRandomWordFromArr(tokenId, "SECOND_WORD", secondWords);
       string memory third = pickRandomWordFromArr(tokenId, "THIRD_WORD", thirdWords);
       string memory combinedWord = string(abi.encodePacked(first, second, third));
+      string memory randomColor = pickRandomColor(tokenId);
       console.log("\n--------------------");
-      console.log(first, second, third, combinedWord);
+      console.log("random 1st, 2nd, 3rd and combinedWord is: "first, second, third, combinedWord);
+      console.log("random color: ", randomColor);
       console.log("--------------------\n");
       // Add cmbined word in our svg
-      string memory finalSvg = string(abi.encodePacked(baseSvg, combinedWord, "</text></svg>"));
+      // string memory finalSvg = string(abi.encodePacked(baseSvg, combinedWord, "</text></svg>"));
+      
+      // random color + word SVG.
+      string memory finalSvg = string(abi.encodePacked(svgPartOne, randomColor, svgPartTwo, combinedWord, "</text></svg>"));
+
       // prepare JSON metadata and base64 encode it
       string memory json = Base64.encode(
           bytes(
@@ -83,7 +101,9 @@ contract DeNFT is ERC721URIStorage {
       _setTokenURI(tokenId, finalTokenUri); 
       // save and increament id for next nft
       _tokenIds.increment();
-      // log
+      // log as nft minted
       console.log("An NFT w/ ID %s has been minted to %s", tokenId, msg.sender);
+      // emit event that nft is minted
+      emit nftMinted(msg.sender, tokenId);
     }
 }
