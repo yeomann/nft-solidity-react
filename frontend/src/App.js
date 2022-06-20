@@ -10,38 +10,53 @@ const CONTRACT_ADDRESS = '0xe9abbe7f0618157888413b116130f2111118bba4'
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState('')
 
+  // check for correct network
+  const checkNetwork = useCallback(async () => {
+    const { ethereum } = window;
+    let chainId = await ethereum.request({ method: 'eth_chainId' })
+    console.log('Connected to Rinkeby Test Network, Rinkeby ChainID=' + chainId);
+
+    // String, hex code of the chainId of the Rinkebey test network
+    const rinkebyChainId = '0x4'
+    if (chainId !== rinkebyChainId) {
+      alert('You are not connected to the Rinkeby Test Network!')
+    }
+  }, [])
+
   const checkIfWalletIsConnected = useCallback(async () => {
     /*
      * First make sure we have access to window.ethereum
      */
-    const { ethereum } = window;
+    const { ethereum } = window
 
     if (!ethereum) {
       console.log('Make sure you have metamask!');
       return
     } else {
       console.log('We have the ethereum object', ethereum);
+      // finally check for correct network
+      await checkNetwork();
     }
 
     /*
      * Check if we're authorized to access the user's wallet
      */
-    const accounts = await ethereum.request({ method: 'eth_accounts' });
+    const accounts = await ethereum.request({ method: 'eth_accounts' })
 
     /*
      * User can have multiple authorized accounts, we grab the first one if its there!
      */
     if (accounts.length !== 0) {
       const account = accounts[0]
-      console.log('Found an authorized account:', account);
-      setCurrentAccount(account);
+      console.log('Found an authorized account:', account)
+      setCurrentAccount(account)
 
       // Listener: In case, User comes to our site and already had their wallet connected + authorized.
-      startNFTMintEventListener();
+      startNFTMintEventListener()
     } else {
-      console.log('No authorized account found');
+      console.log('No authorized account found')
     }
-  }, [])
+  }, [checkNetwork]);
 
   /*
    * Implement your connectWallet method here
@@ -156,12 +171,17 @@ const App = () => {
     </button>
   )
 
-  /*
-   * This runs our function when the page loads.
-   */
+  // on first page load, check wallet is connected or not + check correct network
   useEffect(() => {
-    checkIfWalletIsConnected()
+    checkIfWalletIsConnected();
   }, [checkIfWalletIsConnected])
+
+  // on change account, show chain id of connected network
+  useEffect(() => {
+    window.ethereum.on('chainChanged', (chainId) => {
+      console.log(parseInt(chainId, 16))
+    })
+  }, [])
 
   return (
     <div className="App">
