@@ -14,6 +14,16 @@ const main = async () => {
   txn = await DeNFTContract.mintAnNFT();
   // Wait for it to be mined.
   await txn.wait();
+
+  // mint NFT.
+  txn = await DeNFTContract.mintAnNFT();
+  // Wait for it to be mined.
+  await txn.wait();
+
+  // mint NFT.
+  txn = await DeNFTContract.mintAnNFT();
+  // Wait for it to be mined.
+  await txn.wait();
 };
 
 (async () => {

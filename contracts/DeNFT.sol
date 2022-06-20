@@ -10,6 +10,8 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import { Base64 } from "./lib/Base64.sol";
 
 contract DeNFT is ERC721URIStorage {
+    // per acount mint limit
+    uint256 mintCap = 2;
     // event on mint
     event nftMinted(address sender, uint256 tokenId);
     // some 3 random arrays of words 
@@ -28,7 +30,7 @@ contract DeNFT is ERC721URIStorage {
     Counters.Counter private _tokenIds;
 
     constructor() ERC721("DeNft", "DENFT") {
-        console.log("initing NFT contract, Owner=", msg.sender);
+      console.log("initing NFT contract, Owner=", msg.sender);
     }
 
      // function to randomly pick a word from each array.
@@ -50,6 +52,8 @@ contract DeNFT is ERC721URIStorage {
     }
 
     function mintAnNFT() public {
+      // check if the account is allowed to mint
+      require( balanceOf(msg.sender) < mintCap, "Only 2 NFTs can be minted per account" );
       // current NFT item count with the help of _tokenIds.current() in the contract
       // will start with 0
       uint256 tokenId = _tokenIds.current();
@@ -59,9 +63,9 @@ contract DeNFT is ERC721URIStorage {
       string memory third = pickRandomWordFromArr(tokenId, "THIRD_WORD", thirdWords);
       string memory combinedWord = string(abi.encodePacked(first, second, third));
       string memory randomColor = pickRandomColor(tokenId);
-      console.log("\n--------------------");
-      console.log("random 1st, 2nd, 3rd and combinedWord is: "first, second, third, combinedWord);
-      console.log("random color: ", randomColor);
+      console.log("\n--------first, second, third, combinedWord and Color----------");
+      console.log(first, second, third, combinedWord);
+      console.log(randomColor);
       console.log("--------------------\n");
       // Add cmbined word in our svg
       // string memory finalSvg = string(abi.encodePacked(baseSvg, combinedWord, "</text></svg>"));
