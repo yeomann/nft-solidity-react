@@ -29,7 +29,7 @@ contract DeNFT is ERC721URIStorage {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
-    constructor() ERC721("DeNft", "DENFT") {
+    constructor() ERC721("DeNftv2", "DENFTv2") {
       console.log("initing NFT contract, Owner=", msg.sender);
     }
 
