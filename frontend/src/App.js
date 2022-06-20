@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { ethers } from 'ethers'
 
 import './styles/App.css'
@@ -10,23 +10,23 @@ const CONTRACT_ADDRESS = '0xe9abbe7f0618157888413b116130f2111118bba4'
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState('')
 
-  const checkIfWalletIsConnected = async () => {
+  const checkIfWalletIsConnected = useCallback(async () => {
     /*
      * First make sure we have access to window.ethereum
      */
-    const { ethereum } = window
+    const { ethereum } = window;
 
     if (!ethereum) {
-      console.log('Make sure you have metamask!')
+      console.log('Make sure you have metamask!');
       return
     } else {
-      console.log('We have the ethereum object', ethereum)
+      console.log('We have the ethereum object', ethereum);
     }
 
     /*
      * Check if we're authorized to access the user's wallet
      */
-    const accounts = await ethereum.request({ method: 'eth_accounts' })
+    const accounts = await ethereum.request({ method: 'eth_accounts' });
 
     /*
      * User can have multiple authorized accounts, we grab the first one if its there!
@@ -39,9 +39,9 @@ const App = () => {
       // Listener: In case, User comes to our site and already had their wallet connected + authorized.
       startNFTMintEventListener();
     } else {
-      console.log('No authorized account found')
+      console.log('No authorized account found');
     }
-  }
+  }, [])
 
   /*
    * Implement your connectWallet method here
@@ -63,10 +63,10 @@ const App = () => {
       /*
        * authorized metamask acccount
        */
-      console.log('Connected', accounts[0]);
-      setCurrentAccount(accounts[0]);
+      console.log('Connected', accounts[0])
+      setCurrentAccount(accounts[0])
       // Listener: In case, User comes to our site and already had their wallet connected + authorized.
-      startNFTMintEventListener();
+      startNFTMintEventListener()
     } catch (error) {
       console.log(error)
     }
@@ -112,14 +112,14 @@ const App = () => {
 
   // setup our NFT minted listener
   const startNFTMintEventListener = async () => {
-    console.log('nft minted listener is called...');
+    console.log('nft minted listener is called...')
     try {
       const { ethereum } = window
 
       if (ethereum) {
         // Same stuff again
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
+        const provider = new ethers.providers.Web3Provider(ethereum)
+        const signer = provider.getSigner()
 
         const connectedContract = new ethers.Contract(
           CONTRACT_ADDRESS,
@@ -129,12 +129,15 @@ const App = () => {
 
         // capture contract event upon new NFT is minted
         connectedContract.on('nftMinted', (from, tokenId) => {
-          console.log(from, tokenId.toNumber(), `https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`);
+          console.log(
+            from,
+            tokenId.toNumber(),
+            `https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
+          )
           alert(
             `Your NFT is minted and sent it to your wallet. It can take about 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
-          );
-        });
-
+          )
+        })
       } else {
         console.log("Ethereum object doesn't exist!")
       }
@@ -157,8 +160,8 @@ const App = () => {
    * This runs our function when the page loads.
    */
   useEffect(() => {
-    checkIfWalletIsConnected();
-  }, [])
+    checkIfWalletIsConnected()
+  }, [checkIfWalletIsConnected])
 
   return (
     <div className="App">
