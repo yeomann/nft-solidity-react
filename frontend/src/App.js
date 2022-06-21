@@ -5,16 +5,18 @@ import './styles/App.css'
 import DeNftContract from './utils/DeNFT.json'
 
 // Constants
-const CONTRACT_ADDRESS = '0xe9abbe7f0618157888413b116130f2111118bba4'
+const CONTRACT_ADDRESS = '0x441c3dE8D3e5fE096eb6a0b434236c1d6132E6bd'
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState('')
+  const [minting, setMinting] = useState(false)
+  const [limitErr, setLimitErr] = useState('')
 
   // check for correct network
   const checkNetwork = useCallback(async () => {
-    const { ethereum } = window;
+    const { ethereum } = window
     let chainId = await ethereum.request({ method: 'eth_chainId' })
-    console.log('Connected to Rinkeby Test Network, Rinkeby ChainID=' + chainId);
+    console.log('Connected to Rinkeby Test Network, Rinkeby ChainID=' + chainId)
 
     // String, hex code of the chainId of the Rinkebey test network
     const rinkebyChainId = '0x4'
@@ -23,6 +25,46 @@ const App = () => {
     }
   }, [])
 
+  // setup our NFT minted listener
+  const startNFTMintEventListener = useCallback(async () => {
+    console.log('nft minted listener is called...')
+    try {
+      const { ethereum } = window
+
+      if (ethereum) {
+        // Same stuff again
+        const provider = new ethers.providers.Web3Provider(ethereum)
+        const signer = provider.getSigner()
+
+        const connectedContract = new ethers.Contract(
+          CONTRACT_ADDRESS,
+          DeNftContract.abi,
+          signer,
+        )
+
+        // capture contract event upon new NFT is minted
+        connectedContract.on('nftMinted', (from, tokenId) => {
+          // if some minting is going on, then tell its finished
+          if (minting) {
+            setMinting(false)
+          }
+          console.log(
+            from,
+            tokenId.toNumber(),
+            `https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
+          )
+          alert(
+            `Your NFT is minted and sent it to your wallet. It can take about 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
+          )
+        })
+      } else {
+        console.log("Ethereum object doesn't exist!")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }, [minting])
+
   const checkIfWalletIsConnected = useCallback(async () => {
     /*
      * First make sure we have access to window.ethereum
@@ -30,12 +72,12 @@ const App = () => {
     const { ethereum } = window
 
     if (!ethereum) {
-      console.log('Make sure you have metamask!');
+      console.log('Make sure you have metamask!')
       return
     } else {
-      console.log('We have the ethereum object', ethereum);
+      console.log('We have the ethereum object', ethereum)
       // finally check for correct network
-      await checkNetwork();
+      await checkNetwork()
     }
 
     /*
@@ -56,7 +98,7 @@ const App = () => {
     } else {
       console.log('No authorized account found')
     }
-  }, [checkNetwork]);
+  }, [checkNetwork, startNFTMintEventListener])
 
   /*
    * Implement your connectWallet method here
@@ -92,72 +134,42 @@ const App = () => {
     try {
       const { ethereum } = window
 
-      if (ethereum) {
-        // MetaMask injects a Web3 Provider as "web3.currentProvider", so
-        // we can wrap it up in the ethers.js Web3Provider, which wraps a
-        // Web3 Provider and exposes the ethers.js Provider API.
-
-        const provider = new ethers.providers.Web3Provider(ethereum)
-
-        // There is only ever up to one account in MetaMask exposed
-        const signer = provider.getSigner()
-
-        const connectedContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          DeNftContract.abi,
-          signer,
-        )
-
-        console.log('Going to pop wallet now to pay gas...')
-        let nftTxn = await connectedContract.mintAnNFT()
-
-        console.log('Mining...wait!')
-        await nftTxn.wait()
-
-        console.log(
-          `Mined, Transaction at: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`,
-        )
-      } else {
+      if (!ethereum) {
         console.log("Ethereum object doesn't exist!")
       }
+
+      // MetaMask injects a Web3 Provider as "web3.currentProvider", so
+      // we can wrap it up in the ethers.js Web3Provider, which wraps a
+      // Web3 Provider and exposes the ethers.js Provider API.
+
+      const provider = new ethers.providers.Web3Provider(ethereum)
+
+      // There is only ever up to one account in MetaMask exposed
+      const signer = provider.getSigner()
+
+      const connectedContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        DeNftContract.abi,
+        signer,
+      )
+
+      console.log('Going to pop wallet now to pay gas...')
+      setMinting(true)
+      let nftTxn = await connectedContract.mintAnNFT()
+
+      console.log('Mining...wait!')
+      await nftTxn.wait()
+
+      console.log(
+        `Mined, Transaction at: https://rinkeby.etherscan.io/tx/${nftTxn.hash}`,
+      )
     } catch (error) {
       console.log(error)
-    }
-  }
-
-  // setup our NFT minted listener
-  const startNFTMintEventListener = async () => {
-    console.log('nft minted listener is called...')
-    try {
-      const { ethereum } = window
-
-      if (ethereum) {
-        // Same stuff again
-        const provider = new ethers.providers.Web3Provider(ethereum)
-        const signer = provider.getSigner()
-
-        const connectedContract = new ethers.Contract(
-          CONTRACT_ADDRESS,
-          DeNftContract.abi,
-          signer,
-        )
-
-        // capture contract event upon new NFT is minted
-        connectedContract.on('nftMinted', (from, tokenId) => {
-          console.log(
-            from,
-            tokenId.toNumber(),
-            `https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
-          )
-          alert(
-            `Your NFT is minted and sent it to your wallet. It can take about 10 min to show up on OpenSea. Here's the link: https://testnets.opensea.io/assets/${CONTRACT_ADDRESS}/${tokenId.toNumber()}`,
-          )
-        })
-      } else {
-        console.log("Ethereum object doesn't exist!")
+      if (error?.reason.includes('2 NFTs')) {
+        setLimitErr(error?.reason)
       }
-    } catch (error) {
-      console.log(error)
+
+      setMinting(false)
     }
   }
 
@@ -173,7 +185,7 @@ const App = () => {
 
   // on first page load, check wallet is connected or not + check correct network
   useEffect(() => {
-    checkIfWalletIsConnected();
+    checkIfWalletIsConnected()
   }, [checkIfWalletIsConnected])
 
   // on change account, show chain id of connected network
@@ -187,9 +199,12 @@ const App = () => {
     <div className="App">
       <div className="container">
         <div className="header-container">
-          <p className="header gradient-text">My NFT Collection</p>
+          <p className="header gradient-text">
+            Mint random NFT on OpenSea/Rarible
+          </p>
           <p className="sub-text">
-            Each unique. Each beautiful. Discover your NFT today.
+            Click to discover unique, beautiful your NFT <br /> NFT'll be minted
+            and send to your wallet for FREE!
           </p>
           {currentAccount === '' ? (
             renderNotConnectedContainer()
@@ -197,10 +212,12 @@ const App = () => {
             <button
               onClick={contractMintNftCall}
               className="cta-button connect-wallet-button"
+              disabled={limitErr}
             >
-              Mint NFT
+              {minting ? 'Minting NFT...Please wait' : 'Mint NFT'}
             </button>
           )}
+          {limitErr.length > 0 && <p className="sub-text error">{limitErr}</p>}
         </div>
       </div>
     </div>

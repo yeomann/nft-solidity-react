@@ -23,6 +23,10 @@
   font-weight: bold;
 }
 
+.sub-text.error {
+  color: red;
+}
+
 .sub-text {
   font-size: 25px;
   color: white;
@@ -33,6 +37,15 @@
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.cta-button:disabled,
+.cta-button[disabled]{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+  user-select: none;
+  cursor: not-allowed;
 }
 
 .cta-button {
