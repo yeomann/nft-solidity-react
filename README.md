@@ -4,6 +4,7 @@
 - Create SVG NFT as base64 URI
 - Add JSON of NFT metadata for opensea
 - Create full JSON with SVG NFT + metadata inside
+- Add limit from smart contract per account 2 NFTs mint only
 - Create React UI and Integrate the contract
 - Mint NFT from UI
 - Run + Deploy contract on Rinkeby + Görli
